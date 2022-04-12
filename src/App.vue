@@ -2,19 +2,31 @@
     <div id="app">
         <div class="wrapper">
             <router-view @sign-in="setAuth" />
+          <!--<router-view/>-->
         </div>
     </div>
 </template>
 <script>
 import { mapGetters } from 'vuex';
 export default {
-    computed: {
-        ...mapGetters(["getAuth"])
+
+    data() {
+        return {
+            //isAuth: true,
+          isAuth: false,
+          token: null,
+        };
     },
     methods: {
-        setAuth(el) {
+      getToken(){
+        this.token = localStorage.getItem('x_xsrf_token')
+      },
+
+        setAuth(ev) {
+        console.log(ev);
+            //this.isAuth = ev;
             this.$store.commit('setAuth', true);
-            if (el === true) {
+            if (ev === true) {
                 this.$router.push("/personalpage").catch(() => {});
             } else {
                 this.$router.push("/welcomepage").catch(() => {});
@@ -22,6 +34,11 @@ export default {
         },
     },
     mounted() {
+      this.getToken()
+      if(this.token){
+        //this.isAuth = true
+        this.$store.commit('setAuth', false);
+        }
         if (this.$route.name === "NotFound") {
             this.$router.push("/404").catch(() => {});
         } else {
@@ -32,6 +49,12 @@ export default {
             }
         }
     },
+    computed: {
+      ...mapGetters(["getAuth"])
+    },
+  updated() {
+    this.getToken()
+  },
 };
 </script>
 

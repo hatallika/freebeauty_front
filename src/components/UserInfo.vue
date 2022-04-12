@@ -10,15 +10,32 @@
                 </defs>
             </svg>
             <div class="name_user">
-                <div class="name">Иван Иванов</div>
+                <div class="name">{{userInfo.name}}</div>
                 <div class="specialist">Tattoo artist</div>
             </div>
         </div>
 </template>
 
 <script>
+import axios from "@/api/axios";
+
 export default {
     name: 'UserInfo',
+  data() {
+    return {
+      userInfo: [],
+    };
+  },
+  mounted() {
+    this.$router.push("/personalpage/bookingtable").catch(() => {});
+    axios.get('/sanctum/csrf-cookie').then(() => {
+      axios.get('/api/user').then(res => {
+        console.log(res.data.user);
+        this.userInfo = res.data.user;
+      })
+    });
+  },
+
 }
 </script>
 

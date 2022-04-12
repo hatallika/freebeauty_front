@@ -1,19 +1,38 @@
 <template>
-  <div class="authorization">
-    <button class="sign_out" @click="setAuth">SIGN OUT</button>
-  </div>
+
+     <div class="authorization">
+        <button  @click.prevent="logout" class="sign_out">SIGN OUT</button>
+    </div>
+<!--&gt;>>>>>> e2c2912 (bc test bookingtable, auth)-->
 </template>
 
 <script>
+import axios from "@/api/axios";
+
 export default {
-  name: "AuthBtn",
+// <<<<<<< HEAD
+//   methods: {
+//     setAuth() {
+//         this.$store.commit('setAuth', false);
+//         this.$router.push("/welcomepage").catch(() => {});
+//     },
+//   },
+// };
+// =======
+    name: 'AuthBtn',
+
   methods: {
-    setAuth() {
-        this.$store.commit('setAuth', false);
-        this.$router.push("/welcomepage").catch(() => {});
-    },
+    logout(){
+      axios.post('/logout')
+          .then( () => {
+
+            localStorage.removeItem('x_xsrf_token');
+            //this.$router.push({name: 'welcomepage'});
+            this.$router.push("/welcomepage").catch(() => {});
+          })
+    }
   },
-};
+}
 </script>
 
 <style lang="scss" scoped>
