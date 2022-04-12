@@ -4,7 +4,7 @@
       class="table_row"
       :class="slotStatus(item.status)"
       @click="setBook(item)"
-      v-for="(item, index) in slotList"
+      v-for="(item, index) in eventslots"
       :key="index"
     >
       <p class="table_row_slottime">{{ item.time }}</p>
@@ -19,10 +19,16 @@
 </template>
 
 <script>
+import axios from "@/api/axios";
+
 export default {
   name: "BookingTable",
   data() {
     return {
+      events:[],
+      eventslots:[],
+      userName: null,
+      worktime:[9,10,11,12,13,14,15,16,17,18,19],
       slotList: [
         {
           time: "10:00",
@@ -82,19 +88,73 @@ export default {
     },
     slotStatus(item) {
       switch (item) {
-        case "pass":
+        case "failed":
           return "clientPass";
-        case "past":
+        case "done":
           return "clientPast";
-        case "masterbook":
+        case "master_w":
           return "clientMaster";
-        case "clientbook":
+        case "client_w":
           return "clientClient";
         default:
           break;
       }
     },
+    getEventsInfo(){
+      axios.get('/sanctum/csrf-cookie').then(() => {
+        //запрос всех событий
+
+        // axios.get('api/master/events').then(res=>{
+        // })
+        //запрос событий на дату
+        axios.post('api/master/events/oneday', {day: '2022-05-11'}).then(res=>{
+          this.events = res.data.eventsoneday;
+          console.log(res.data);
+          this.userName = this.events[0].user.name;
+          console.log(this.events);
+          this.eventslots = this.getSlots(10,19,this.events);
+          console.log(this.eventslots[3].time);
+
+        })
+      })
+    },
+    getSlots(start,end,events){
+      let slots = [];
+      for(let i=start; i <= end; i++){
+        let el = events.find(el => parseInt(el.datetime.split(/[- :]/)[3]) === i);
+
+        if (el){
+          slots.push({
+            time: el.datetime.split(/[- :]/)[3] + ":00",
+            service: el.service.name,
+            name: el.name,
+            phone: el.phone,
+            comment: "comments",
+            status: el.status,
+          })
+        } else {
+          slots.push({
+          time: i + ":00",
+          service: "",
+          name: "",
+          phone: "",
+          comment: "",
+          status: "",
+        })
+        }
+      }
+
+      return slots;
+    }
   },
+  mounted() {
+    this.getEventsInfo();
+
+  },
+  created() {
+    //this.getSlots(10,19, this.events);
+
+  }
 };
 </script>
 

@@ -10,9 +10,14 @@ export default {
     data() {
         return {
             isAuth: false,
+          token: null,
         };
     },
     methods: {
+      getToken(){
+        this.token = localStorage.getItem('x_xsrf_token')
+      },
+
         setAuth(ev) {
             this.isAuth = ev;
             if (ev === true) {
@@ -23,6 +28,8 @@ export default {
         },
     },
     mounted() {
+      this.getToken()
+      if(this.token){ this.isAuth = true}
         if (this.$route.name === "NotFound") {
             this.$router.push("/404").catch(() => {});
         } else {
@@ -33,6 +40,9 @@ export default {
             }
         }
     },
+  updated() {
+    this.getToken()
+  },
 };
 </script>
 

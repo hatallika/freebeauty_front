@@ -4,7 +4,7 @@
     <div class="content">
       <div class="content_masterinfo">
         <div class="content_infoblock">
-          <p class="content_masterinfo_name">{{ masterName }}</p>
+          <p class="content_masterinfo_name">{{ userInfo.name }}</p>
           <p class="content_masterinfo_role">{{ masterRole }}</p>
         </div>
       </div>
@@ -36,6 +36,7 @@
 
 <script>
 import SideBar from "@/components/SideBar.vue";
+import axios from "@/api/axios";
 
 export default {
   name: "PersonalCabinet",
@@ -44,10 +45,11 @@ export default {
   },
   data() {
     return {
+      userInfo: [],
       masterName: "Иван Иванов",
       masterRole: "Tatoo artist",
       listTitle: "Рабочий день",
-      listDate: "27.01.2022",
+      listDate: "12.04.2022",
       listTime: "10:00 - 18:00",
       isBookingList: true,
     };
@@ -59,6 +61,12 @@ export default {
   },
   mounted() {
     this.$router.push("/personalpage/bookingtable").catch(() => {});
+    axios.get('/sanctum/csrf-cookie').then(() => {
+      axios.get('/api/user').then(res => {
+        console.log(res.data.user);
+        this.userInfo = res.data.user;
+      })
+    });
   },
 };
 </script>

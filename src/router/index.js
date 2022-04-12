@@ -54,4 +54,31 @@ const router = new VueRouter({
     routes,
 });
 
+
+router.beforeEach((to, from, next)=>{
+    const token = localStorage.getItem('x_xsrf_token');
+
+    //не авторизован: нет токена
+    if(!token) {
+        //если пользователь хочет пойти на страницы
+        if(to.name === 'welcomepage' || to.name === 'registration'){
+            return next();
+        } else  {
+            //пользователь хочет пойти на другие страницы
+            return next({
+                name: 'welcomepage'
+            })
+        }
+    }
+    //  авторизован: есть токен
+    if(token && to.name === 'welcomepage' || to.name === 'registration' ){
+        return next({
+            name: 'personalpage'
+        })
+    }
+    next();
+})
+
+
+
 export default router;
