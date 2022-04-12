@@ -1,12 +1,25 @@
 <template>
      <div class="authorization">
-        <button class="sign_out">SIGN OUT</button>
+        <button  @click.prevent="logout" class="sign_out">SIGN OUT</button>
     </div>
 </template>
 
 <script>
+import axios from "@/api/axios";
+
 export default {
     name: 'AuthBtn',
+
+  methods: {
+    logout(){
+      axios.post('/logout')
+          .then( () => {
+
+            localStorage.removeItem('x_xsrf_token');
+            this.$router.push({name: 'welcomepage'});
+          })
+    }
+  },
 }
 </script>
 

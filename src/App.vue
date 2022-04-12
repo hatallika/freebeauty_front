@@ -2,6 +2,7 @@
     <div id="app">
         <div class="wrapper">
             <router-view @sign-in="setAuth" />
+          <!--<router-view/>-->
         </div>
     </div>
 </template>
@@ -9,11 +10,18 @@
 export default {
     data() {
         return {
-            isAuth: true,
+            //isAuth: true,
+            isAuth: false,
+          token: null,
         };
     },
     methods: {
+      getToken(){
+        this.token = localStorage.getItem('x_xsrf_token')
+      },
+
         setAuth(ev) {
+        console.log(ev);
             this.isAuth = ev;
             if (ev === true) {
                 this.$router.push("/personalpage").catch(() => {});
@@ -23,6 +31,8 @@ export default {
         },
     },
     mounted() {
+      this.getToken()
+      if(this.token){ this.isAuth = true}
         if (this.$route.name === "NotFound") {
             this.$router.push("/404").catch(() => {});
         } else {
@@ -33,6 +43,9 @@ export default {
             }
         }
     },
+  updated() {
+    this.getToken()
+  },
 };
 </script>
 
