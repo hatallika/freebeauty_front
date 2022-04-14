@@ -4,8 +4,8 @@
     <div class="content">
       <div class="content_masterinfo">
         <div class="content_infoblock">
-          <p class="content_masterinfo_name">{{ userInfo.name }}</p>
-          <p class="content_masterinfo_role">{{ masterRole }}</p>
+          <p class="content_masterinfo_name">{{userInfo.lastname}} {{ userInfo.name }} {{userInfo.patronymic}}</p>
+          <p class="content_masterinfo_role">{{ userInfo.profession }}</p>
         </div>
       </div>
       <div class="content_listinfo">
