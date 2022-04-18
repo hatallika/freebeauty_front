@@ -142,7 +142,7 @@ export default {
         // axios.get('api/master/events').then(res=>{
         // })
         //запрос событий на дату
-        axios.post('api/master/events/oneday', {day: '2022-05-11'}).then(res=>{
+        axios.post('api/master/events/oneday', {day: '2022-04-25'}).then(res=>{
           this.events = res.data.eventsoneday;
           console.log(res.data);
           this.userName = this.events[0].user.name;
