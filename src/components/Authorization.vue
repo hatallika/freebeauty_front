@@ -23,7 +23,7 @@ export default {
 
   methods: {
     logout(){
-      axios.post('/logout')
+      axios.post('/api/logout')
           .then( () => {
 
             localStorage.removeItem('x_xsrf_token');

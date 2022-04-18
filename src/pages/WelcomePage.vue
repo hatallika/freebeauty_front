@@ -54,14 +54,15 @@ export default {
             this.$emit('sign-in', true)
         },
       loginIn(){
-        axios.get('/sanctum/csrf-cookie').then(response => {
-          console.log(response);
+        axios.get('/sanctum/csrf-cookie').then(() => {
+
           axios.post('/api/login',{
             email: this.login,
             password: this.pass,
           })
               .then(response => {
-                if(response.data.success === true) {
+                console.log(response);
+                if(response.status === 204) {
                   console.log(response.data);
                   localStorage.setItem('x_xsrf_token', response.config.headers['X-XSRF-TOKEN'] ); //по его существованию можно выводить/прятать ссылки ля авторизованных и нет.
                   this.$router.push({name: 'BookingTable'});
