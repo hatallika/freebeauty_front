@@ -1,7 +1,7 @@
 <template>
     <div class="datepicker">
         <form>
-            <input type="date" class="picker">
+            <input type="date" class="picker" v-model="mydate" @input="getSelect">
         </form>
     </div>
 </template>
@@ -9,6 +9,19 @@
 <script>
 export default {
     name: 'DatePicker',
+
+  data(){
+      return {
+        mydate: this.$store.getters.SELECTDATA
+      }
+  },
+  methods: {
+    getSelect() {
+      this.$store.commit('SET_SELECTDATA', this.mydate);
+      //this.$store.dispatch('SET_SELECTDATA', this.mydate);
+      this.$eventBus.$emit("callGetEvents");
+      }
+  }
 }
 </script>
 

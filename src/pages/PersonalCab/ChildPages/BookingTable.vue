@@ -7,6 +7,7 @@
       @closeModal="closeModal"
       @setItem="setItem"
     />
+    <div v-if="worktime==null">Этот день не рабочий</div>
     <div class="table_centreblock">
       <div>
         <div
@@ -34,6 +35,8 @@
             <p class="table_row_comment">{{ getItem(item, "comment") }}</p>
           </div>
         </div>
+=======
+
       </div>
     </div>
   </div>
@@ -48,6 +51,7 @@ import axios from "@/api/axios";
 export default {
   name: "BookingTable",
   components: { ClientDetails },
+
   data() {
     return {
       isModalOpen: false,
@@ -57,6 +61,8 @@ export default {
       eventslots:[],
       userName: null,
       //worktime:[9,10,11,12,13,14,15,16,17,18,19],
+
+      worktime: null,
 
     };
   },
@@ -135,6 +141,10 @@ export default {
     },
   },
   mounted() {
+
+    this.$eventBus.$on("callGetEvents", () => {
+      this.getEventsInfo();
+    });
     this.getEventsInfo();
     this.setWorkTime();
         this.actualSlot = {}
@@ -143,18 +153,24 @@ export default {
 
     getEventsInfo(){
       axios.get('/sanctum/csrf-cookie').then(() => {
-        //запрос всех событий
-
-        // axios.get('api/master/events').then(res=>{
-        // })
         //запрос событий на дату
-        axios.post('api/master/events/oneday', {day: '2022-04-25'}).then(res=>{
+        axios.post('api/master/events/oneday', {day: this.$store.getters.SELECTDATA}).then(res=>{ //'2022-04-25'
           this.events = res.data.eventsoneday;
-          console.log(res.data);
-          this.userName = this.events[0].user.name;
-          console.log(this.events);
-          this.eventslots = this.getSlots(10,19,this.events);
-          console.log(this.eventslots[3].time);
+          this.worktime = res.data.worktime;
+          if(this.worktime === null) {
+            console.log('Этот день не рабочий');
+            this.eventslots = [];
+          } else {
+
+            if(this.events[0]){
+              this.userName = this.events[0].user.name;
+            }
+            //получим массив для прорисовки свободных и занятых рабочих часов мастера .
+            this.eventslots = this.getSlots(
+                parseInt(this.worktime.start_time.split(/[- :]/)[0]), //начало рабочего дня
+                parseInt(this.worktime.end_time.split(/[- :]/)[0]),// конец рабочего дня
+                this.events); //записи клиентов
+          }
 
         })
       })
@@ -187,6 +203,9 @@ export default {
 
       return slots;
     }
+
+
+
 
 
 
