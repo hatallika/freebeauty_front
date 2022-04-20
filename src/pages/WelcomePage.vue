@@ -62,8 +62,7 @@ export default {
           })
               .then(response => {
                 console.log(response);
-                if(response.status === 204) {
-                  console.log(response.data);
+                if(response.status === 204 || response.status === 200) {
                   localStorage.setItem('x_xsrf_token', response.config.headers['X-XSRF-TOKEN'] ); //по его существованию можно выводить/прятать ссылки ля авторизованных и нет.
                   this.$router.push({name: 'BookingTable'});
                 } else {

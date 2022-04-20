@@ -49,7 +49,7 @@ export default {
       masterName: "Иван Иванов",
       masterRole: "Tatoo artist",
       listTitle: "Рабочий день",
-      listDate: "12.04.2022",
+      listDate: this.$store.getters.SELECTDATA,
       listTime: "10:00 - 18:00",
       isBookingList: true,
     };

@@ -12,7 +12,7 @@ export default {
         return {
             //isAuth: true,
             isAuth: false,
-          token: null,
+            token: null,
         };
     },
     methods: {
