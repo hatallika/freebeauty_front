@@ -30,7 +30,6 @@ export default {
     this.$router.push("/personalpage/bookingtable").catch(() => {});
     axios.get('/sanctum/csrf-cookie').then(() => {
       axios.get('/api/user').then(res => {
-        console.log(res.data.user);
         this.userInfo = res.data.user;
       })
     });

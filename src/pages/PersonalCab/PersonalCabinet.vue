@@ -63,11 +63,12 @@ export default {
       alert("Что изменить");
     },
   },
-  mounted() {
+  created() {
     this.$router.push("/personalpage/bookingtable").catch(() => {});
     axios.get('/sanctum/csrf-cookie').then(() => {
       axios.get('/api/user').then(res => {
         console.log(res.data.user);
+        //this.$store.commit('SET_MASTER', res.data.user);
         this.userInfo = res.data.user;
       })
     });

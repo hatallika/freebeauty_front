@@ -55,6 +55,11 @@ const routes = [
                 name: "Finance",
                 component: () => import( /*webpackChunkName: "Finance" */ '@/pages/PersonalCab/ChildPages/Finance.vue')
             },
+            {
+                path: "/personalpage/bookingtable/add/",
+                name: "AddBookingItem",
+                component: () => import( /*webpackChunkName: "Contacts" */ '@/pages/PersonalCab/ChildPages/AddBookingItem.vue')
+            },
         ]
     },
     {
