@@ -6,15 +6,22 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     selectData: '2022-04-25',
+    master: null,
   },
   getters: {
     SELECTDATA: state => {
       return state.selectData
-    }
+    },
+    MASTER: state => {
+      return state.master
+    },
   },
   mutations: {
     SET_SELECTDATA: (state, payload) => {
       state.selectData = payload;
+    },
+    SET_MASTER: (state, payload) => {
+      state.master = payload;
     }
   },
   actions: {

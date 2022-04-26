@@ -25,7 +25,6 @@
 import ClientDetails from "@/components/CLientDetails.vue";
 import axios from "@/api/axios";
 
-
 export default {
   name: "BookingTable",
   components: { ClientDetails },
@@ -117,8 +116,18 @@ export default {
   computed: {},
   methods: {
     setBook(item) {
-      this.actualSlot = item
-      this.isModalOpen = true
+      console.log('Выбрано',item);
+      if(item.id){
+        this.actualSlot = item
+        this.isModalOpen = true
+      } else {
+        this.$router.push({name: 'AddBookingItem', params: {
+            time: item.time,
+            date: item.date,
+          }
+        });
+      }
+
     },
     slotStatus(item) {
       switch (item) {
@@ -142,6 +151,7 @@ export default {
         //запрос событий на дату
         axios.post('api/master/events/oneday', {day: this.$store.getters.SELECTDATA}).then(res=>{ //'2022-04-25'
           this.events = res.data.eventsoneday;
+
           this.worktime = res.data.worktime;
           if(this.worktime === null) {
             console.log('Этот день не рабочий');
@@ -168,6 +178,7 @@ export default {
 
         if (el){
           slots.push({
+            id: el.id,
             time: el.datetime.split(/[- :]/)[3] + ":00",
             service: el.service.name,
             name: el.name,
@@ -177,7 +188,8 @@ export default {
           })
         } else {
           slots.push({
-          time: i + ":00",
+          time: (i>=10)?(i + ":00"):"0"+i+":00",
+          date: this.$store.getters.SELECTDATA,
           service: "",
           name: "",
           phone: "",
