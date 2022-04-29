@@ -72,7 +72,7 @@ export default {
       this.form.datetime = this.form.date + ' ' + this.form.time + ':00'
 
       console.log(this.form.datetime);
-      axios.post('/api/master/events/ ', this.form).then(res=>{
+      axios.post('/api/master/events', this.form).then(res=>{
         console.log(res.data);
         if(res.data.success) {
           this.$router.push({name: 'BookingTable'});
