@@ -181,13 +181,14 @@ export default {
         let el = events.find(el => parseInt(el.datetime.split(/[- :]/)[3]) === i);
 
         if (el){
+
           slots.push({
             id: el.id,
             time: el.datetime.split(/[- :]/)[3] + ":00",
             service: el.service.name,
             name: el.name,
             phone: el.phone,
-            comment: "comments",
+            comment: el.comment ?? "Коментарий отстутсвует",
             status: el.status,
           })
         } else {
