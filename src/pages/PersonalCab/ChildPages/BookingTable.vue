@@ -8,6 +8,7 @@
       @setItem="setItem"
     />
     <div v-if="worktime==null">Этот день не рабочий</div>
+
     <div class="table_centreblock">
       <div>
         <div
@@ -35,6 +36,7 @@
             <p class="table_row_comment">{{ getItem(item, "comment") }}</p>
           </div>
         </div>
+
       </div>
     </div>
   </div>
@@ -185,8 +187,10 @@ export default {
           slots.push({
             id: el.id,
             time: el.datetime.split(/[- :]/)[3] + ":00",
+            datetime: el.datetime,
             service: el.service.name,
             name: el.name,
+            lastname: el.lastname,
             phone: el.phone,
             comment: el.comment ?? "Коментарий отстутсвует",
             status: el.status,
