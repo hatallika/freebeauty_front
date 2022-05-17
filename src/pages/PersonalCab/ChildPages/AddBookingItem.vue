@@ -24,6 +24,9 @@
 
           <textarea class="form_bookitem_textarea" name="comment" v-model="form.comment" placeholder="Ваш комментарий"></textarea>
           <span class="form_bookitem_text">Комментарий</span>
+
+          <input class="form_bookitem_field" type="text" name="fixprice" v-model="getFixPrice">
+          <span class="form_bookitem_text">Цена</span>
         </div>
 
         <div class="form_bookitem">
@@ -60,7 +63,7 @@ export default {
         name: "",
         lastname: "",
         datetime: "",
-        service_id:"1",
+        service_id: 1,
         comment:"",
       },
       interval: 60,
@@ -69,7 +72,8 @@ export default {
   methods: {
     save(){
 
-      this.form.datetime = this.form.date + ' ' + this.form.time + ':00'
+      this.form.datetime = this.form.date + ' ' + this.form.time + ':00';
+      this.form.fixprice = this.getFixPrice;
 
       console.log(this.form.datetime);
       axios.post('/api/master/events', this.form).then(res=>{
@@ -82,6 +86,18 @@ export default {
       });
     },
 
+  },
+  computed: {
+    getFixPrice(){
+      //let Index = this.services.indexOf(this.form.service_id);
+      let index = this.services.findIndex(el => el.id === this.form.service_id);
+      let price = null;
+      if (this.services[index]){
+        price = this.services[index].price;
+      }
+
+      return price;
+    },
   },
   created() {
     axios.get('/api/services').then(res => {
