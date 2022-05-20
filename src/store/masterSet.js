@@ -1,4 +1,6 @@
+import axios from "@/api/axios";
 const state = {
+  userInfo: { name: "", lastName: "", patronymic: "", profession: "" },
   serviceArr: [
     {
       title: "",
@@ -34,6 +36,7 @@ const state = {
 };
 
 const getters = {
+    getUserInfo: state => state.userInfo,
     getServiceArr: state => state.serviceArr,
     getTimeLimits: state => state.timeLimits,
     getWorkTime: state => state.workTime,
@@ -41,12 +44,27 @@ const getters = {
 };
 
 const mutations = {
+    setUserInfo: (state, array_UserInfo) => {
+        state.userInfo = array_UserInfo;
+    },
+
     setWorkTimeList(state, array) {
         state.workTimeList = array
     }
 };
 
-const actions = {};
+const actions = {
+    getUserInfoFromBase({commit}){
+        axios.get('/sanctum/csrf-cookie').then(() => {
+            axios.get('/api/user').then(res => {
+                console.log(res.data.user);
+                //this.$store.commit('SET_MASTER', res.data.user);
+                //this.userInfo = res.data.user;
+                commit('setUserInfo', res.data.user)
+            })
+        });
+    }
+};
 
 export default {
   state,

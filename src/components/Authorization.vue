@@ -5,12 +5,19 @@
 </template>
 
 <script>
+import axios from "@/api/axios";
+
 export default {
   name: "AuthBtn",
   methods: {
     setAuth() {
-        this.$store.commit('setAuth', false);
-        this.$router.push("/welcomepage").catch(() => {});
+      axios.post('/api/logout')
+          .then( () => {
+            localStorage.removeItem('x_xsrf_token');
+            this.$store.commit('setAuth', false);
+            this.$router.push("/welcomepage").catch(() => {});
+          })
+
     },
   },
 };

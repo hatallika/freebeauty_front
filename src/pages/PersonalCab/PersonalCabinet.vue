@@ -4,8 +4,8 @@
     <div class="content">
       <div class="content_masterinfo">
         <div class="content_infoblock">
-          <p class="content_masterinfo_name">{{ masterName }}</p>
-          <p class="content_masterinfo_role">{{ masterRole }}</p>
+          <p class="content_masterinfo_name">{{ getUserInfo.name}} {{ getUserInfo.lastname }} {{ getUserInfo.patronymic }}</p>
+          <p class="content_masterinfo_role">{{ getUserInfo.profession }}</p>
         </div>
       </div>
       <div class="content_listinfo">
@@ -54,7 +54,8 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["getWorkTime"]),
+    ...mapGetters(["getWorkTime", "getUserInfo"]),
+
   },
   methods: {
     getAction() {
@@ -64,6 +65,9 @@ export default {
   mounted() {
     this.$router.push("/personalpage/bookingtable").catch(() => {});
   },
+  created() {
+    this.$store.dispatch('getUserInfoFromBase');
+  }
 };
 </script>
 

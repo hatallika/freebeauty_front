@@ -12,16 +12,22 @@ export default {
         ...mapGetters(["getAuth"])
     },
     methods: {
-        setAuth(el) {
-            this.$store.commit('setAuth', true);
-            if (el === true) {
-                this.$router.push("/personalpage").catch(() => {});
-            } else {
-                this.$router.push("/welcomepage").catch(() => {});
-            }
-        },
+      setAuth(el) {
+          //this.$store.commit('setAuth', true);
+          if (el === true) {
+              this.$router.push("/personalpage").catch(() => {});
+          } else {
+              this.$router.push("/welcomepage").catch(() => {});
+          }
+      },
+
+      getToken(){
+        this.token = localStorage.getItem('x_xsrf_token')
+      },
     },
     mounted() {
+      this.getToken();
+      if(this.token){ this.$store.commit('setAuth', true);}
         if (this.$route.name === "NotFound") {
             this.$router.push("/404").catch(() => {});
         } else {
@@ -31,6 +37,9 @@ export default {
                 this.$router.push("/welcomepage").catch(() => {});
             }
         }
+    },
+    updated() {
+      this.getToken()
     },
 };
 </script>

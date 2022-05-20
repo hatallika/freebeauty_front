@@ -19,7 +19,7 @@
             />
             <input
                 class="welcome_form_pass"
-                type="text"
+                type="password"
                 name="pass"
                 id="pass"
                 placeholder="Password..."
@@ -38,6 +38,8 @@
 </template>
 
 <script>
+import axios from "@/api/axios";
+
 export default {
     name: "WelcomePage",
     data() {
@@ -49,7 +51,27 @@ export default {
     },
     methods: {
         getResult() {
-            this.$emit('sign-in', true)
+          axios.get('/sanctum/csrf-cookie').then(() => {
+            axios.post('/api/login',{
+              email: this.login,
+              password: this.pass,
+            })
+                .then(response => {
+                  console.log(response);
+                  if(response.status === 204 || response.status === 200) {
+                    localStorage.setItem('x_xsrf_token', response.config.headers['X-XSRF-TOKEN'] ); //по его существованию можно выводить/прятать ссылки для авторизованных и нет.
+                    //this.$router.push({name: 'BookingTable'});
+                    this.$emit('sign-in', true);
+                    this.$store.commit('setAuth', true);
+                  } else {
+                    this.error = response.data.message
+                  }
+                })
+                .catch(err => {
+                  console.log(err.response);
+                })
+          });
+
         },
     },
 };
