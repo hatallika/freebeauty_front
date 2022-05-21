@@ -28,10 +28,14 @@ const state = {
     },
   ],
   timeLimits: [15, 30, 45, 60],
+
   workTime: {
+       date: '',
       from: '10:00',
       to: '20:00',
   },
+
+  isWorkDay: false,
   workTimeList:[],
 };
 
@@ -50,6 +54,10 @@ const mutations = {
 
     setWorkTimeList(state, array) {
         state.workTimeList = array
+    },
+
+    setWorkTime(state, array) {
+        state.workTime = array
     }
 };
 
@@ -63,6 +71,29 @@ const actions = {
                 commit('setUserInfo', res.data.user)
             })
         });
+    },
+
+    getWorkTimeFromDB({commit, rootState}){
+        axios.get('/sanctum/csrf-cookie').then(() => {
+            //запрос рабочего графика  на дату
+            axios.post('api/master/worktime/oneday', {day: rootState.selectData}).then(res=>{ //
+                //this.worktime = res.data.worktime;
+                console.log(res.data);
+                if(res.data.worktime) {
+                    rootState.isWorkDay = true;
+                    let newDate = res.data.worktime.date.split('-');
+                    console.log(newDate);
+                    commit('setWorkTime', {
+                        from: res.data.worktime.start_time.replace(/(:\d{2})$/, ""),
+                        to: res.data.worktime.end_time.replace(/(:\d{2})$/, ""),
+                        date: newDate[2]+'.'+ newDate[1]+ '.' + newDate[0],
+                    });
+                } else {
+                    rootState.isWorkDay = false;
+                }
+
+            })
+        })
     }
 };
 

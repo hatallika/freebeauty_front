@@ -56,6 +56,10 @@ export default {
   computed: {
     ...mapGetters(["getSlotList", "getWorkTime", "getWorkTimeList"]),
   },
+  created() {
+    this.$store.dispatch('getWorkTimeFromDB') // dispatch loading
+    console.log(this.$store.getters.getWorkTime);
+  },
   methods: {
     getItem(item, name) {
       let slot = this.getSlotList.find((el) => {

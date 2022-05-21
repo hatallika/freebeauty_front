@@ -10,15 +10,20 @@
                 </defs>
             </svg>
             <div class="name_user">
-                <div class="name">Иван Иванов</div>
-                <div class="specialist">Tattoo artist</div>
+                <div class="name"> {{getUserInfo.name}} {{getUserInfo.lastname}}</div>
+                <div class="specialist">{{ getUserInfo.profession }}</div>
             </div>
         </div>
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 export default {
     name: 'UserInfo',
+    computed: {
+      ...mapGetters(["getUserInfo"]),
+
+    },
 }
 </script>
 

@@ -12,10 +12,10 @@
         <div class="content_infoblock">
           <div class="content_listinfo_headtext">
             <p class="content_listinfo_title">{{ listTitle }}</p>
-            <p v-if="isBookingList" class="content_listinfo_date">
-              {{ listDate }}
+            <p v-if="getIsWorkDate" class="content_listinfo_date">
+              {{ getWorkTime.date }}
             </p>
-            <p v-if="isBookingList" class="content_listinfo_time">
+            <p v-if="getIsWorkDate" class="content_listinfo_time">
               ( {{ getWorkTime.from }} - {{ getWorkTime.to }} )
             </p>
           </div>
@@ -47,14 +47,17 @@ export default {
     return {
       masterName: "Иван Иванов",
       masterRole: "Tatoo artist",
-      listTitle: "Рабочий день",
+
       listDate: "27.01.2022",
       listTime: "10:00 - 18:00",
       isBookingList: true,
     };
   },
   computed: {
-    ...mapGetters(["getWorkTime", "getUserInfo"]),
+    ...mapGetters(["getWorkTime", "getUserInfo", "getIsWorkDate"]),
+    listTitle() {
+      return this.$store.getters.getIsWorkDate ? "Рабочий день" : "Нерабочий день";
+    },
 
   },
   methods: {
