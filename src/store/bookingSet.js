@@ -1,3 +1,5 @@
+import axios from "@/api/axios";
+
 const state = {
     slotList: [
         {
@@ -83,10 +85,59 @@ const mutations = {
     setSlotList(state, newItem) {
         state.slotList[newItem.index] = newItem.item
         state.slotList = [...state.slotList]
-    }
+    },
+    setAllSlots: (state, array) => {
+        state.slotList = array;
+    },
 }
 
 const actions = {
+    getSlotListFromBase({commit, rootState,getters}){
+        axios.get('/sanctum/csrf-cookie').then(() => {
+            axios.post('api/master/events/oneday', {day: rootState.selectData}).then(res => {
+
+                let events = res.data.eventsoneday;
+                let worktime = res.data.worktime;
+                console.log(events, worktime);
+                if(res.data.worktime) {
+                    let slots = [];
+                    for (let i = parseInt(worktime.start_time.split(/[- :]/)[0]); i <= parseInt(worktime.end_time.split(/[- :]/)[0]); i++) {
+                        let el = events.find(el => parseInt(el.datetime.split(/[- :]/)[3]) === i);
+                        if (el) {
+                            slots.push({
+                                id: el.id,
+                                time: el.datetime.split(/[- :]/)[3] + ":00",
+                                datetime: el.datetime,
+                                service: el.service.name,
+                                name: el.name,
+                                lastname: el.lastname,
+                                phone: el.phone,
+                                comment: el.comment ?? "Коментарий отстутсвует",
+                                status: el.status,
+                                isFree: false,
+
+                            })
+                        } else {
+                            slots.push({
+                                time: (i >= 10) ? (i + ":00") : "0" + i + ":00",
+                                date: getters.SELECTDATA,
+                                service: "",
+                                name: "",
+                                phone: "",
+                                comment: "",
+                                status: "",
+                                isFree: true,
+
+                            })
+                        }
+                    }
+                    console.log("Slots", slots);
+                    commit("setAllSlots", slots);
+                    console.log(getters.getSlotList);
+                }
+            })
+        })
+    }
 }
 
 export default {

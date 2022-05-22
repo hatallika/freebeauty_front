@@ -17,9 +17,9 @@ export default {
     methods: {
       getSelect() {
         this.$store.commit('SET_SELECTDATA', this.mydate);
-        //this.$store.dispatch('SET_SELECTDATA', this.mydate);
-        //this.$eventBus.$emit("callGetEvents");
-        this.$store.dispatch('getWorkTimeFromDB')
+        this.$store.dispatch("getWorkTimeFromDB");
+        this.$store.dispatch('getSlotListFromBase');
+
       }
     }
 }

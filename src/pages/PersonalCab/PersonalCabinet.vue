@@ -56,7 +56,7 @@ export default {
   computed: {
     ...mapGetters(["getWorkTime", "getUserInfo", "getIsWorkDate"]),
     listTitle() {
-      return this.$store.getters.getIsWorkDate ? "Рабочий день" : "Нерабочий день";
+      return this.getIsWorkDate ? "Рабочий день" : "Нерабочий день";
     },
 
   },

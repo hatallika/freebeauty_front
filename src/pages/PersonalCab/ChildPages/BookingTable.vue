@@ -7,7 +7,7 @@
       @closeModal="closeModal"
       @setItem="setItem"
     />
-    <div class="table_centreblock">
+    <div class="table_centreblock" v-if="getIsWorkDate" >
       <div>
         <div
           class="table_basicRow"
@@ -54,13 +54,15 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["getSlotList", "getWorkTime", "getWorkTimeList"]),
+    ...mapGetters(["getSlotList", "getWorkTime", "getWorkTimeList", "getIsWorkDate"]),
   },
   created() {
-    this.$store.dispatch('getWorkTimeFromDB') // dispatch loading
-    console.log(this.$store.getters.getWorkTime);
+    this.$store.dispatch('getWorkTimeFromDB');
+    this.$store.dispatch('getSlotListFromBase');
+
   },
   methods: {
+
     getItem(item, name) {
       let slot = this.getSlotList.find((el) => {
         return el.time === item;
@@ -78,13 +80,13 @@ export default {
       switch (item) {
         case "freeslot":
           return "freeSlot";
-        case "pass":
+        case "failed":
           return "clientPass";
-        case "past":
+        case "done":
           return "clientPast";
-        case "masterbook":
+        case "master_w":
           return "clientMaster";
-        case "clientbook":
+        case "client_w":
           return "clientClient";
         default:
           break;
@@ -119,6 +121,7 @@ export default {
         setArray.push(`${toH}:${toM}`);
       }
       this.$store.commit("setWorkTimeList", setArray);
+
     },
 
     // TODO вынести в стор метод .
@@ -132,7 +135,7 @@ export default {
     },
   },
   mounted() {
-    this.setWorkTime();
+
   },
 };
 </script>
