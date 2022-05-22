@@ -1,6 +1,15 @@
 import axios from "@/api/axios";
 const state = {
   userInfo: { name: "", lastName: "", patronymic: "", profession: "" },
+  servicesDB: [
+      {
+          id: "1225458959896",
+          service: "Сеанс тату - Малый размер",//name
+          description:"",
+          time: "60 минут",//interval 01:00:00
+          price: "2000 р.",//price 2000
+      },
+  ],
   serviceArr: [
     {
       title: "",
@@ -42,6 +51,7 @@ const state = {
 const getters = {
     getUserInfo: state => state.userInfo,
     getServiceArr: state => state.serviceArr,
+    getServicesDB: state => state.servicesDB,
     getTimeLimits: state => state.timeLimits,
     getWorkTime: state => state.workTime,
     getWorkTimeList: state => state.workTimeList
@@ -50,6 +60,10 @@ const getters = {
 const mutations = {
     setUserInfo: (state, array_UserInfo) => {
         state.userInfo = array_UserInfo;
+    },
+
+    setServicesDB: (state, array) => {
+        state.servicesDB = array;
     },
 
     setWorkTimeList(state, array) {
@@ -112,6 +126,16 @@ const actions = {
             })
         })
     },
+
+    getServicesFromDB({commit}){
+        axios.get('/sanctum/csrf-cookie').then(() => {
+            axios.get('api/master/services').then(res => {
+                console.log(res.data);
+                commit('setServicesDB', res.data.services);
+            })
+        });
+
+    }
 
     // setWorkTime_({commit, state}) {
     //
