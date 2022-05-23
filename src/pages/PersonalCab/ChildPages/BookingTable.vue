@@ -28,8 +28,8 @@
           :style="{ height: setRowHeight(item) }"
         >
           <div class="table_row_slotblock">
-            <p class="table_row_service">{{ getItem(item, "service") }}</p>
-            <p class="table_row_name">{{ getItem(item, "name") }}</p>
+            <p class="table_row_service">{{ getItem(item, "service_name") }}</p>
+            <p class="table_row_name">{{ getItem(item, "name") }} {{ getItem(item, "lastname") }}</p>
             <p class="table_row_phone">{{ getItem(item, "phone") }}</p>
             <p class="table_row_comment">{{ getItem(item, "comment") }}</p>
           </div>
@@ -75,6 +75,7 @@ export default {
       this.actualSlot = item[index];
       this.isModalOpen = true;
       this.actualIndex = index;
+      console.log("Index",index);
     },
     slotStatus(item) {
       switch (item) {

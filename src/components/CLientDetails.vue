@@ -6,16 +6,29 @@
         <div class="form_leftblock">
           <div class="form_fio form_itemblock">
             <input class="form_input" id="name" type="text" v-model="name" />
-            <label class="form_label" for="name">ФИО</label>
+            <label class="form_label" for="name">Имя</label>
           </div>
+          <div class="form_fio form_itemblock">
+            <input class="form_input" id="lastname" type="text" v-model="lastname" />
+            <label class="form_label" for="lastname">Фамилия</label>
+          </div>
+
           <div class="form_serviceselect form_itemblock">
-            <select class="form_input" id="service" v-model="service">
-              <option v-for="(option, index) of getServiceArr" :key="index">
-                {{ option.title }}
+            <select class="form_input" id="service_id" v-model="service_id">
+              <option v-for="(option, index) of getServicesDB" :key="index" :value="option.id">
+                {{ option.name }}
               </option>
             </select>
-            <label class="form_label" for="service">Услуга</label>
+            <label class="form_label" for="service_id">Услуга</label>
+
           </div>
+          <div class="form_fio form_itemblock">
+            <input class="form_input" id="fixprice" type="text" v-model="fixprice" />
+            <label class="form_label" for="fixprice">Цена</label>
+          </div>
+
+
+
           <div class="form_textarea form_itemblock">
             <textarea
               class="form_input form_textarea"
@@ -50,7 +63,7 @@
           </div>
         </div>
       </form>
-      {{ date }}
+
       <div class="client_modal__btnblock">
         <button
           @click="setItem"
@@ -71,6 +84,7 @@
 
 <script>
 import { mapGetters } from 'vuex';
+import axios from "@/api/axios";
 export default {
   name: "ClientDetails",
   props: {
@@ -87,38 +101,85 @@ export default {
     return {
       date: "",
       time: "",
-      service: "",
+      service_id: "",
       name: "",
+      lastname: "",
       phone: "",
       comment: "",
       status: "",
+      //fixprice: "",
       isFree: false,
       serviceTime: 60,
       serviceSelect: "",
     };
   },
   computed: {
-    ...mapGetters(['getServiceArr', 'getTimeLimits'])
+    ...mapGetters(['getServiceArr', 'getTimeLimits', 'getServicesDB']),
+    fixprice: function (){
+      //let Index = this.services.indexOf(this.form.service_id);
+      let index = this.getServicesDB.findIndex(el => el.id === this.service_id);
+
+      let price = null;
+      if (this.getServicesDB[index]){
+        price = this.getServicesDB[index].price;
+      }
+      return price;
+    },
   },
   methods: {
     closeModal() {
       this.$emit("closeModal");
     },
+    addEventToDB(){
+
+      axios.post('/api/master/events', {
+        name: this.name,
+        lastname: this.lastname,
+        phone:this.phone,
+        service_id: this.service_id,
+        datetime: this.date + " " + this.time + ":00",
+        status: 'master_w',
+        fixprice: this.fixprice,
+        comment: this.comment,
+      }).then(res=>{
+        console.log(res.data);
+        if(res.data.success) {
+          this.$store.dispatch("getSlotListFromBase");
+          this.closeModal();
+        }
+      }).catch((error)=> {
+        console.log(error.response.data.errors);
+      });
+    },
+
+    updateEventFromDB(){
+
+    },
     setItem() {
-      let newItem = {
-        index: this.actualIndex,
-        date: this.date,
-        item: {
-          time: this.time,
-          service: this.service,
-          name: this.name,
-          phone: this.phone,
-          comment: this.comment,
-          status: this.setStatus() || this.setSec() ,
-          isFree: this.setIsFree(),
-        },
-      };
-      this.$emit("setItem", newItem);
+      if(this.actualItem.isFree){
+        this.addEventToDB();
+      } else {
+        this.updateEventFromDB();
+      }
+
+      // let newItem = {
+      //   index: this.actualIndex,
+      //   date: this.date,
+      //   item: {
+      //     time: this.time,
+      //     service: this.service,
+      //     name: this.name,
+      //     phone: this.phone,
+      //     comment: this.comment,
+      //     status: this.setStatus() || this.setSec() ,
+      //     isFree: this.setIsFree(),
+      //   },
+      // };
+      // this.$emit("setItem", newItem);
+      // if (newItem.item.isFree){
+      //   console.log(newItem)
+      //   //this.addEvenToDB(newItem);
+      // }
     },
     setIsFree() {
       if (
@@ -127,6 +188,7 @@ export default {
         this.phone === ""
       ) {
         return true;
+
       } else {
         return false;
       }
@@ -148,19 +210,24 @@ export default {
   },
   mounted() {
     this.time = this.actualItem.time;
+    this.date = this.actualItem.date;
     this.name = this.actualItem.name;
-    this.service = this.actualItem.service;
+    this.lastname = this.actualItem.lastname;
+    this.service_id = this.actualItem.service.id;
     this.phone = this.actualItem.phone;
     this.comment = this.actualItem.comment;
     this.status = this.actualItem.status;
     this.isFree = this.actualItem.isFree;
-    if (this.service != "") {
-      ({ title: this.service, timeLimit: this.serviceTime } =
-        this.getServiceArr.find((item) => {
-          return item.title == this.service;
-        }));
-    }
+    // if (this.service != "") {
+    //   ({ title: this.service, timeLimit: this.serviceTime } =
+    //     this.getServiceArr.find((item) => {
+    //       return item.title == this.service;
+    //     }));
+    // }
   },
+  created() {
+    this.$store.dispatch("getServicesFromDB");
+  }
 };
 </script>
 

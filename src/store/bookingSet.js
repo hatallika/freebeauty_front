@@ -107,8 +107,10 @@ const actions = {
                             slots.push({
                                 id: el.id,
                                 time: el.datetime.split(/[- :]/)[3] + ":00",
+                                date: el.datetime.split(/[ ]/)[0],
                                 datetime: el.datetime,
-                                service: el.service.name,
+                                service: el.service,
+                                service_name: el.service.name,
                                 name: el.name,
                                 lastname: el.lastname,
                                 phone: el.phone,
