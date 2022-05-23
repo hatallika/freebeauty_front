@@ -23,8 +23,8 @@
 
           </div>
           <div class="form_fio form_itemblock">
-            <input class="form_input" id="fixprice" type="text" v-model="fixprice" />
-            <label class="form_label" for="fixprice">Цена</label>
+            <input class="form_input" id="price" type="text" v-model="getPrice" />
+            <label class="form_label" for="price">Цена</label>
           </div>
 
 
@@ -53,6 +53,12 @@
             <input class="form_input" id="time" type="time" v-model="time" />
             <label class="form_label" for="time">Время</label>
           </div>
+
+          <div class="form_fio form_itemblock" v-if="!isFree">
+            <input class="form_input" id="fixprice" type="text" v-model="fixprice" />
+            <label class="form_label" for="fixprice">Цена продажи</label>
+          </div>
+
           <div class="form_stime form_itemblock">
             <select class="form_input" id="stime" v-model="serviceTime">
               <option v-for="(time, index) of getTimeLimits" :key="index">
@@ -107,7 +113,7 @@ export default {
       phone: "",
       comment: "",
       status: "",
-      //fixprice: "",
+      fixprice: "",
       isFree: false,
       serviceTime: 60,
       serviceSelect: "",
@@ -115,16 +121,20 @@ export default {
   },
   computed: {
     ...mapGetters(['getServiceArr', 'getTimeLimits', 'getServicesDB']),
-    fixprice: function (){
+    getPrice: {
+      get: function (){
       //let Index = this.services.indexOf(this.form.service_id);
       let index = this.getServicesDB.findIndex(el => el.id === this.service_id);
-
       let price = null;
       if (this.getServicesDB[index]){
         price = this.getServicesDB[index].price;
       }
       return price;
     },
+      set: function (newValue){
+        this.fixprice = newValue;
+      }
+    }
   },
   methods: {
     closeModal() {
@@ -139,7 +149,7 @@ export default {
         service_id: this.service_id,
         datetime: this.date + " " + this.time + ":00",
         status: 'master_w',
-        fixprice: this.fixprice,
+        fixprice: this.getPrice,
         comment: this.comment,
       }).then(res=>{
         console.log(res.data);
@@ -153,8 +163,28 @@ export default {
     },
 
     updateEventFromDB(){
+      console.log("id",this.actualItem.id);
+      axios.put('/api/master/events/'+ this.actualItem.id + '/', {
+        name: this.name,
+        lastname: this.lastname,
+        phone:this.phone,
+        service_id: this.service_id,
+        datetime: this.date + " " + this.time + ":00",
+        status: 'master_w',
+        fixprice: this.fixprice,
+        comment: this.comment,
+      }).then(res => {
+        console.log(res.data);
+        if(res.data) {
+          this.$store.dispatch("getSlotListFromBase");
+          this.closeModal();
+        }
+      }).catch((error)=> {
+        console.log(error.response.data.errors);
+      })
 
     },
+
     setItem() {
       if(this.actualItem.isFree){
         this.addEventToDB();
@@ -218,6 +248,7 @@ export default {
     this.comment = this.actualItem.comment;
     this.status = this.actualItem.status;
     this.isFree = this.actualItem.isFree;
+    this.fixprice = this.actualItem.fixprice;
     // if (this.service != "") {
     //   ({ title: this.service, timeLimit: this.serviceTime } =
     //     this.getServiceArr.find((item) => {

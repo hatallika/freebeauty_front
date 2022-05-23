@@ -110,6 +110,7 @@ const actions = {
                                 date: el.datetime.split(/[ ]/)[0],
                                 datetime: el.datetime,
                                 service: el.service,
+                                fixprice: el.fixprice,
                                 service_name: el.service.name,
                                 name: el.name,
                                 lastname: el.lastname,
