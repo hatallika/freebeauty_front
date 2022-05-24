@@ -25,9 +25,8 @@
           <div class="form_fio form_itemblock">
             <input class="form_input" id="price" type="text" v-model="getPrice" />
             <label class="form_label" for="price">Цена</label>
+            <div class="form_label">Договорная цена: {{getOldPrice}}</div>
           </div>
-
-
 
           <div class="form_textarea form_itemblock">
             <textarea
@@ -49,14 +48,10 @@
             <input class="form_input" id="date" type="date" v-model="date" />
             <label class="form_label" for="date">Дата</label>
           </div>
+
           <div class="form_time form_itemblock">
             <input class="form_input" id="time" type="time" v-model="time" />
             <label class="form_label" for="time">Время</label>
-          </div>
-
-          <div class="form_fio form_itemblock" v-if="!isFree">
-            <input class="form_input" id="fixprice" type="text" v-model="fixprice" />
-            <label class="form_label" for="fixprice">Цена продажи</label>
           </div>
 
           <div class="form_stime form_itemblock">
@@ -83,6 +78,7 @@
         >
           ОТМЕНА
         </button>
+        <a v-if="!isFree" href="javascript:;" v-on:click="deleteEvent">Удалить событие</a>
       </div>
     </div>
   </div>
@@ -134,7 +130,10 @@ export default {
       set: function (newValue){
         this.fixprice = newValue;
       }
-    }
+    },
+    getOldPrice: function (){
+      return this.actualItem.fixprice
+    },
   },
   methods: {
     closeModal() {
@@ -164,7 +163,7 @@ export default {
 
     updateEventFromDB(){
       console.log("id",this.actualItem.id);
-      axios.put('/api/master/events/'+ this.actualItem.id + '/', {
+      axios.put('/api/master/events/'+ this.actualItem.id, {
         name: this.name,
         lastname: this.lastname,
         phone:this.phone,
@@ -183,6 +182,22 @@ export default {
         console.log(error.response.data.errors);
       })
 
+    },
+
+    deleteEvent(){
+      if (confirm('Удалить Событие: ' + this.actualItem.service.name)) {
+        axios.delete('api/master/events/' + this.actualItem.id).then(res=>{
+          console.log(res.data);
+          if(res.data.success){
+            this.$store.dispatch("getSlotListFromBase");
+            this.closeModal();
+          }
+
+        })
+            .catch(error => {
+              console.log(error);
+            })
+      }
     },
 
     setItem() {
