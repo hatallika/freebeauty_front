@@ -87,7 +87,7 @@ export default {
                 price: "8000 р."
             }
         ]
-    }), 
+    }),
     methods: {
         editService(id) {
             this.editServiceId = id;

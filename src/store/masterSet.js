@@ -1,6 +1,8 @@
 import axios from "@/api/axios";
 const state = {
   userInfo: { name: "", lastName: "", patronymic: "", profession: "" },
+
+  userProfile: {},
   servicesDB: [
       {
           id: "1225458959896",
@@ -50,6 +52,7 @@ const state = {
 
 const getters = {
     getUserInfo: state => state.userInfo,
+    getUserProfile: state => state.userProfile,
     getServiceArr: state => state.serviceArr,
     getServicesDB: state => state.servicesDB,
     getTimeLimits: state => state.timeLimits,
@@ -60,6 +63,10 @@ const getters = {
 const mutations = {
     setUserInfo: (state, array_UserInfo) => {
         state.userInfo = array_UserInfo;
+    },
+
+    setUserProfile: (state, el) => {
+        state.userProfile = el;
     },
 
     setServicesDB: (state, array) => {
@@ -79,7 +86,7 @@ const actions = {
     getUserInfoFromBase({commit}){
         axios.get('/sanctum/csrf-cookie').then(() => {
             axios.get('/api/user').then(res => {
-                console.log(res.data.user);
+                console.log("UserInfo",res.data.user);
                 commit('setUserInfo', res.data.user)
             })
         });
@@ -135,6 +142,12 @@ const actions = {
             })
         });
 
+    },
+
+    getMasterProfile({commit}) {
+        axios.get('/api/master/profile').then(res => {
+            commit("setUserProfile", res.data.user);
+        })
     }
 
     // setWorkTime_({commit, state}) {

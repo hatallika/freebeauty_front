@@ -62,6 +62,17 @@
             </select>
             <label class="form_label" for="stime">Длительность</label>
           </div>
+
+          <div class="form_serviceselect form_itemblock" v-if="!isFree">
+            <select class="form_input" id="status" v-model="status">
+              <option v-for="(option, index) of statuses" :key="index" :value="index">
+                {{ option }}
+              </option>
+            </select>
+            <label class="form_label" for="status">Статус</label>
+
+          </div>
+
         </div>
       </form>
 
@@ -79,6 +90,7 @@
           ОТМЕНА
         </button>
         <a v-if="!isFree" href="javascript:;" v-on:click="deleteEvent">Удалить событие</a>
+        <div class="message" v-if="error">{{error}}</div>
       </div>
     </div>
   </div>
@@ -101,6 +113,7 @@ export default {
   },
   data() {
     return {
+      error: null,
       date: "",
       time: "",
       service_id: "",
@@ -113,6 +126,7 @@ export default {
       isFree: false,
       serviceTime: 60,
       serviceSelect: "",
+      statuses: {},
     };
   },
   computed: {
@@ -156,8 +170,13 @@ export default {
           this.$store.dispatch("getSlotListFromBase");
           this.closeModal();
         }
+        if(res.data.error){
+          this.error = res.data.error
+        }
+
       }).catch((error)=> {
         console.log(error.response.data.errors);
+
       });
     },
 
@@ -169,9 +188,10 @@ export default {
         phone:this.phone,
         service_id: this.service_id,
         datetime: this.date + " " + this.time + ":00",
-        status: 'master_w',
+        status: this.status,
         fixprice: this.fixprice,
         comment: this.comment,
+
       }).then(res => {
         console.log(res.data);
         if(res.data) {
@@ -180,6 +200,7 @@ export default {
         }
       }).catch((error)=> {
         console.log(error.response.data.errors);
+
       })
 
     },
@@ -264,6 +285,8 @@ export default {
     this.status = this.actualItem.status;
     this.isFree = this.actualItem.isFree;
     this.fixprice = this.actualItem.fixprice;
+    this.statuses = this.$store.getters.getStatuses;
+    console.log("Statussss!!",this.statuses);
     // if (this.service != "") {
     //   ({ title: this.service, timeLimit: this.serviceTime } =
     //     this.getServiceArr.find((item) => {

@@ -1,6 +1,12 @@
 import axios from "@/api/axios";
 
 const state = {
+    statuses : {
+        master_w: "Добавлено мастером",
+        client_w:"Добавлено клиентом",
+        done: "Заказ исполнен",
+        failed:"Отмена заказа"
+    },
     slotList: [
         {
           time: "10:00",
@@ -79,6 +85,7 @@ const state = {
 
 const getters = {
     getSlotList: state => state.slotList,
+    getStatuses: state=>state.statuses,
 }
 
 const mutations = {
